@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 마이플랫폼</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">마이플랫폼 로그인</h1>
+            <p class="text-slate-400 mt-2 text-sm">구직자 및 구인자 통합 로그인 / Login</p>
+        </div>
+
+        <form method="POST" class="space-y-5">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">{{ field.label }}</label>
+                <!-- 장고 기본 로그인 폼 입력창에 다크 스타일 클래스 적용을 위한 렌더링 -->
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" 
+                    class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+                    placeholder="정보를 입력하세요">
+                {% if field.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="text-red-400 text-xs text-center">
+                    {{ form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30">
+                    로그인 하기 / Sign In
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center mt-6 text-sm text-slate-400">
+            아직 계정이 없으신가요? 
+            <a href="{% url 'signup' %}" class="text-indigo-400 font-semibold hover:underline">회원가입하기</a>
+        </div>
+    </div>
+</body>
+</html>

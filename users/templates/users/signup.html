@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">회원가입 - 마이플랫폼</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700">
+        <div class="text-center mb-8">
+            <h1 id="main-heading" class="text-3xl font-bold tracking-tight text-white">마이플랫폼 회원가입</h1>
+            <p id="sub-heading" class="text-slate-400 mt-2 text-sm">구직자 및 구인자를 위한 통합 회원가입</p>
+        </div>
+
+        <form method="POST" class="space-y-5">
+            {% csrf_token %>
+            
+            {% for field in form %}
+                {% if field.name != 'agree_privacy_policy' %}
+                <div id="field-container-{{ field.name }}" class="{% if field.name == 'nationality' or field.name == 'visa_type' %}foreigner-only hidden{% endif %}">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            <!-- 개인정보 처리방침 약관 및 동의 섹션 -->
+            <div class="pt-2 border-t border-slate-700">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-sm font-medium text-slate-300">개인정보 수집 및 이용 동의 / Privacy Policy</label>
+                    <button type="button" onclick="toggleModal()" class="text-xs text-indigo-400 hover:underline focus:outline-none">
+                        약관보기 / View Terms
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-3 bg-slate-700/50 p-3 rounded-xl border border-slate-600">
+                    {{ form.agree_privacy_policy }}
+                    <span class="text-xs text-slate-300">위 내용에 동의합니다. (필수) / I agree to the terms.</span>
+                </div>
+                {% if form.agree_privacy_policy.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.agree_privacy_policy.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" id="submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30">
+                    가입 완료하기
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 개인정보 처리방침 모달 팝업 -->
+    <div id="privacy-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-slate-800 border border-slate-700 max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="text-lg font-bold text-white">개인정보 처리방침 (Privacy Policy)</h3>
+                <button onclick="toggleModal()" class="text-slate-400 hover:text-white font-bold text-lg">&times;</button>
+            </div>
+            <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
+                <p><strong>1. 수집하는 개인정보 항목:</strong> 이름, 전화번호, 출생연도, 성별, 국적(외국인), 비자 종류(외국인), 비밀번호</p>
+                <p><strong>2. 개인정보의 수집 및 이용 목적:</strong> 마이플랫폼 구인구직 서비스 제공, 회원 식별, 구직자-구인자 매칭 및 포인트 마케팅 관리</p>
+                <p><strong>3. 개인정보의 보유 및 이용 기간:</strong> 회원 탈퇴 시까지 (단, 관계 법령에 따라 일정 기간 보존될 수 있음)</p>
+                <p><strong>4. 동의 거부 권리 및 불이익:</strong> 이용자는 개인정보 수집 동의를 거부할 수 있으나, 거부 시 회원가입이 불가능합니다.</p>
+            </div>
+            <div class="pt-2">
+                <button type="button" onclick="toggleModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-xl font-semibold text-sm transition">
+                    확인 완료 / Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 스크립트 -->
+    <script>
+        const userTypeSelect = document.getElementById('id_user_type');
+        const foreignerFields = document.querySelectorAll('.foreigner-only');
+        const mainHeading = document.getElementById('main-heading');
+        const subHeading = document.getElementById('sub-heading');
+        const submitBtn = document.getElementById('submit-btn');
+        const pageTitle = document.getElementById('page-title');
+        const privacyModal = document.getElementById('privacy-modal');
+
+        function updateUI() {
+            const selectedValue = userTypeSelect.value;
+            if (selectedValue === 'foreigner') {
+                pageTitle.innerText = "Sign Up - MyPlatform";
+                mainHeading.innerText = "Create Account";
+                subHeading.innerText = "Job Seeker & Employer Registration for Foreigners";
+                submitBtn.innerText = "Complete Sign Up";
+                foreignerFields.forEach(el => el.classList.remove('hidden'));
+            } else {
+                pageTitle.innerText = "회원가입 - 마이플랫폼";
+                mainHeading.innerText = "마이플랫폼 회원가입";
+                subHeading.innerText = "구직자 및 구인자를 위한 통합 회원가입";
+                submitBtn.innerText = "가입 완료하기";
+                foreignerFields.forEach(el => el.classList.add('hidden'));
+            }
+        }
+
+        function toggleModal() {
+            privacyModal.classList.toggle('hidden');
+        }
+
+        userTypeSelect.addEventListener('change', updateUI);
+        window.addEventListener('DOMContentLoaded', updateUI);
+    </script>
+</body>
+</html>
