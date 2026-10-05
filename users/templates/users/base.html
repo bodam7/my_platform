@@ -3,57 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>일자리 매칭 플랫폼</title>
-    <!-- Tailwind CSS CDN -->
+    <title>{% block title %}{{ site_config.site_name|default:"일자리 매칭 플랫폼" }}{% endblock %}</title>
+    <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome (아이콘) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-50 font-sans min-h-screen flex flex-col justify-between text-slate-800">
 
-    <!-- 상단 네비게이션바 -->
-    <nav class="bg-slate-900 text-white shadow-md border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <!-- 로고 영역 -->
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="{% url 'home' %}" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        <span class="bg-blue-600 text-white px-2.5 py-1 rounded-lg text-sm font-black">JOB</span>
-                        <span>일자리플랫폼</span>
-                    </a>
-                </div>
+    <!-- ================= 상단 네비게이션 헤더 ================= -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 w-full">
+        <div class="w-full px-4 sm:px-8 lg:px-12 h-20 flex items-center justify-between mx-auto">
+            
+            <!-- 동적 로고 영역 (Admin 연동 - 크기 확대 반영) -->
+            <a href="/" class="flex items-center gap-2 py-1">
+                {% if site_config and site_config.logo %}
+                    <!-- 관리자 페이지에서 업로드한 로고 크기 확대 (h-18 sm:h-20) -->
+   <img src="{{ site_config.logo.url }}" alt="{{ site_config.site_name }}" class="h-18 sm:h-20 w-auto object-contain">
+                {% else %}
+                    <!-- 등록된 로고가 없을 때 기본 텍스트/아이콘 로고 -->
+                    <div class="bg-indigo-600 text-white font-black px-3 py-1.5 rounded-lg text-sm md:text-base flex items-center justify-center shadow-sm">
+                        JOB
+                    </div>
+                    <span class="text-lg md:text-2xl font-bold tracking-tight text-white">
+                        {{ site_config.site_name|default:"일자리플랫폼" }}
+                    </span>
+                {% endif %}
+            </a>
 
-                <!-- 로그인 상태에 따른 동적 버튼 -->
-                <div class="flex items-center gap-3">
-                    {% if user.is_authenticated %}
-                        <span class="text-sm font-medium text-slate-300 hidden sm:inline-block">
-                            <strong class="text-white">{{ user.username }}</strong>님 환영합니다!
-                        </span>
-                        <a href="{% url 'logout' %}" class="inline-flex items-center justify-center h-10 px-4 text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-slate-700">
-                            로그아웃
-                        </a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="inline-flex items-center justify-center h-10 px-4 text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-                            로그인
-                        </a>
-                        <a href="{% url 'signup' %}" class="inline-flex items-center justify-center h-10 px-4 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg shadow-sm transition-colors">
-                            간편가입
-                        </a>
-                    {% endif %}
-                </div>
+            <!-- 우측 로그인/로그아웃 메뉴 -->
+            <div class="flex items-center gap-3 text-xs md:text-sm">
+                {% if user.is_authenticated %}
+                    <span class="text-slate-300 hidden sm:inline"><strong class="text-white">{{ user.username }}</strong>님 환영합니다!</span>
+                    <a href="#" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition">로그아웃</a>
+                {% else %}
+                    <a href="#" class="text-slate-300 hover:text-white transition">로그인</a>
+                    <a href="#" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition">회원가입</a>
+                {% endif %}
             </div>
-        </div>
-    </nav>
 
-    <!-- 메인 컨텐츠 영역 -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        </div>
+    </header>
+
+    <!-- ================= 본문 콘텐츠 영역 ================= -->
+    <div class="flex-grow w-full">
         {% block content %}
         {% endblock %}
-    </main>
+    </div>
 
-    <!-- 하단 푸터 -->
-    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-auto py-6">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm">
-            <p>© 2026 일자리 매칭 플랫폼. All rights reserved.</p>
+    <!-- ================= 하단 푸터 ================= -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs md:text-sm w-full">
+        <div class="w-full px-4 text-center">
+            <p>&copy; 2026 {{ site_config.site_name|default:"일자리 매칭 플랫폼" }}. All rights reserved.</p>
         </div>
     </footer>
 

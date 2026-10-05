@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django import forms
 from .models import CustomUser
-from jobs.models import JobPosting
+from jobs.models import JobPosting, Category
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
@@ -122,16 +122,20 @@ def signup_view(request):
     return render(request, 'users/signup.html', {'form': form})
 
 def home_view(request):
-    """로그인한 사용자에게 환영 메시지와 구인 공고 목록을 보여주는 메인 홈 페이지"""
+    """로그인한 사용자에게 환영 메시지와 카테고리, 구인 공고 목록을 보여주는 메인 뷰"""
     # 1. 데이터베이스에서 모든 구인 공고를 최신순으로 가져옵니다.
     job_list = JobPosting.objects.all().order_by('-created_at')
     
-    # 2. 템플릿에 전달할 데이터 묶음(context)을 만듭니다.
+    # 2. 데이터베이스에서 모든 카테고리를 정렬 순서(order)대로 가져옵니다.
+    categories = Category.objects.all().order_by('order', 'id')
+    
+    # 3. 템플릿에 전달할 데이터 묶음(context)을 만듭니다.
     context = {
         'job_list': job_list,
+        'categories': categories,  # 카테고리 데이터 추가!
     }
     
-    # 3. users/home.html에 context 데이터를 함께 전달하며 렌더링합니다.
+    # 4. users/home.html에 context 데이터를 함께 전달하며 렌더링합니다.
     return render(request, 'users/home.html', context)
 
 def custom_logout_view(request):

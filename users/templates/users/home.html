@@ -1,126 +1,109 @@
 {% extends 'users/base.html' %}
-{% load static %}
 
 {% block content %}
-<!-- 메인 히어로 배너 (개선된 프리미엄 레이아웃) -->
-<section class="bg-slate-900 text-white rounded-2xl p-6 md:p-10 mb-10 shadow-xl border border-slate-800">
-    <div class="max-w-3xl mx-auto text-center flex flex-col items-center">
-        <!-- 뱃지 -->
-        <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold bg-blue-600/90 text-blue-100 mb-4 tracking-wide shadow-sm">
-            ✨ 10초 간편 가입
-        </span>
-        
-        <!-- 메인 타이틀 (줄바꿈 및 폰트 균형 조정) -->
-        <h1 class="text-xl md:text-3xl font-extrabold tracking-tight leading-snug mb-3 text-white">
-            👀 10초 간편가입 후, 모든 구인 정보 열람과 즉시 지원!
-        </h1>
-        
-        <!-- 서브 타이틀 -->
-        <p class="text-sm md:text-base text-slate-300 font-medium mb-6">
-            내국인·외국인 근로자를 위한 맞춤형 일자리 매칭 서비스
-        </p>
+<!-- 메인 컨테이너: PC 화면 전체를 시원하게 채우도록 w-full 적용 -->
+<main class="w-full px-4 sm:px-8 lg:px-12 py-6 mx-auto">
 
-        <!-- 버튼 (미로그인 시) -->
-        {% if not user.is_authenticated %}
-        <div>
-            <a href="{% url 'signup' %}" class="inline-flex items-center justify-center h-12 px-6 text-base font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5">
-                간편가입하고 일자리 찾기
-            </a>
-        </div>
-        {% endif %}
+  <!-- ================= 로그인 안 했을 때 보이는 10초 간편가입 배너 ================= -->
+  {% if not user.is_authenticated %}
+  <section class="mb-8 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-2xl p-5 md:p-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <span class="bg-yellow-400 text-slate-900 font-extrabold text-xs px-2.5 py-1 rounded-full mb-2 inline-block">⚡ 10초 간편가입</span>
+      <h2 class="text-xl md:text-2xl font-bold">지금 가입하고 맞춤 일자리 정보를 바로 받아보세요!</h2>
+      <p class="text-indigo-100 text-xs md:text-sm mt-1">복잡한 절차 없이 클릭 한 번으로 빠르게 시작하세요.</p>
     </div>
-</section>
+    <a href="#" class="w-full md:w-auto px-6 py-3 bg-white text-indigo-600 font-bold rounded-xl text-center shadow hover:bg-slate-50 transition whitespace-nowrap">
+      🚀 10초 만에 시작하기
+    </a>
+  </section>
+  {% endif %}
 
-<!-- 업종별 찾기 섹션 -->
-<section class="mb-12">
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>📌</span> 업종별 찾기
+  <!-- ================= 업종별 찾기 (모바일/PC 모두 한 줄 고정) ================= -->
+  <section class="mb-10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+      <div class="flex items-center gap-2 whitespace-nowrap">
+        <h2 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 flex items-center gap-1 shrink-0">
+          <span>📌</span> 업종별 찾기
         </h2>
+        <span class="animate-pulse text-[10px] sm:text-xs md:text-sm font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100 truncate">
+          ✨ 아래 이미지를 클릭하세요!
+        </span>
+      </div>
     </div>
 
     {% if categories %}
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {% for category in categories %}
-        <a href="#" class="group bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all border border-slate-200/80 flex flex-col items-center text-center">
-            <div class="w-full aspect-[4/3] rounded-lg bg-slate-100 mb-3 overflow-hidden flex items-center justify-center">
-                {% if category.image %}
-                    <img src="{{ category.image.url }}" alt="{{ category.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                {% else %}
-                    <i class="fa-solid fa-briefcase text-3xl text-slate-400"></i>
-                {% endif %}
-            </div>
-            <span class="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition-colors">
-                {{ category.name }}
-            </span>
-        </a>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="bg-white rounded-xl p-8 text-center border border-slate-200/60 shadow-sm">
-        <p class="text-slate-500 text-sm font-medium">등록된 업종 카테고리가 없습니다.</p>
-    </div>
-    {% endif %}
-</section>
-
-<!-- 최신 구인 공고 섹션 -->
-<section class="mb-8">
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>🔥</span> 최신 구인 공고
-        </h2>
-    </div>
-
-    {% if recent_jobs %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for job in recent_jobs %}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden hover:shadow-md transition-all flex flex-col">
-            <!-- 썸네일 영역 (16:9 비율) -->
-            <div class="relative w-full aspect-[16/9] bg-slate-100 overflow-hidden">
-                {% if job.image %}
-                    <img src="{{ job.image.url }}" alt="{{ job.title }}" class="w-full h-full object-cover">
-                {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-slate-400">
-                        <i class="fa-solid fa-building text-4xl"></i>
-                    </div>
-                {% endif %}
-                
-                <!-- 급구/마감 뱃지 -->
-                {% if job.is_urgent %}
-                <span class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
-                    급구
-                </span>
-                {% endif %}
-            </div>
-
-            <!-- 내용 영역 -->
-            <div class="p-5 flex flex-col flex-grow">
-                <div class="text-xs font-semibold text-blue-600 mb-1">
-                    {{ job.category.name|default:"일반" }}
-                </div>
-                <h3 class="text-base font-bold text-slate-900 mb-2 line-clamp-1">
-                    {{ job.title }}
-                </h3>
-                <p class="text-xs text-slate-500 mb-4 line-clamp-2">
-                    {{ job.company_name }} · {{ job.location }}
-                </p>
-
-                <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
-                    <span class="text-sm font-extrabold text-slate-900">
-                        {{ job.salary_info|default:"추후협의" }}
-                    </span>
-                    <a href="#" class="h-9 px-3.5 inline-flex items-center justify-center text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
-                        상세보기
-                    </a>
-                </div>
-            </div>
+    <!-- grid-cols-7 고정: 모바일에서도 잘리지 않고 무조건 1줄로 배치 -->
+    <div class="grid grid-cols-7 gap-1.5 sm:gap-3 md:gap-4">
+      {% for category in categories %}
+      <a href="#" class="group block bg-white rounded-lg md:rounded-xl p-1 md:p-3 shadow-sm hover:shadow-md transition duration-200 border border-slate-100">
+        <!-- 1:1 정방형 프레임 -->
+        <div class="relative w-full aspect-square overflow-hidden rounded-md md:rounded-lg bg-slate-100 flex items-center justify-center">
+          {% if category.image %}
+            <img src="{{ category.image.url }}" 
+                 alt="{{ category.name }} 구인구직 일자리 채용정보" 
+                 title="{{ category.name }}" 
+                 class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          {% else %}
+            <i class="fa-solid fa-briefcase text-base md:text-2xl text-slate-400"></i>
+          {% endif %}
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="bg-white rounded-xl p-8 text-center border border-slate-200/60 shadow-sm">
-        <p class="text-slate-500 text-sm font-medium">현재 등록된 구인 공고가 없습니다.</p>
+        <!-- 모바일 10px 텍스트 지정 -->
+        <div class="mt-1 md:mt-2 text-center">
+          <span class="font-bold text-slate-800 text-[10px] sm:text-xs md:text-sm block truncate">
+            {{ category.name }}
+          </span>
+        </div>
+      </a>
+      {% endfor %}
     </div>
     {% endif %}
-</section>
+  </section>
+
+  <!-- ================= 최신 구인 공고 (모바일 2열 / PC 5열) ================= -->
+  <section class="mb-12">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 flex items-center gap-1">
+        <span>🔥</span> 최신 구인 공고
+      </h2>
+      <a href="#" class="text-xs md:text-sm font-medium text-slate-500 hover:text-slate-800">전체보기 &rarr;</a>
+    </div>
+
+    {% if job_list %}
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-5">
+      {% for job in job_list %}
+      <div class="bg-white rounded-xl md:rounded-2xl p-2.5 md:p-4 shadow-sm hover:shadow-lg transition duration-300 border border-slate-100 flex flex-col justify-between h-full">
+        <div>
+          <div class="relative w-full aspect-[3/4] overflow-hidden rounded-lg md:rounded-xl bg-slate-100 mb-2 md:mb-3">
+            {% if job.image %}
+              <img src="{{ job.image.url }}" alt="{{ job.title }} 구인 공고" class="w-full h-full object-cover">
+            {% else %}
+              <div class="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400">
+                <i class="fa-solid fa-building text-2xl md:text-3xl mb-1"></i>
+                <span class="text-[10px]">이미지 없음</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="space-y-1 mb-3">
+            <p class="text-[10px] md:text-xs font-semibold text-indigo-600 truncate">{{ job.company_name|default:"우수기업" }}</p>
+            <h3 class="font-bold text-slate-900 text-xs md:text-sm line-clamp-2 leading-snug">
+              {{ job.title }}
+            </h3>
+            <p class="text-[10px] md:text-xs text-slate-500 truncate">📍 {{ job.location|default:"지역협의" }}</p>
+            <p class="text-[10px] md:text-xs font-bold text-emerald-600">💰 {{ job.pay_info|default:"협의" }}</p>
+          </div>
+        </div>
+        <a href="#" class="w-full py-2 bg-indigo-600 text-white text-[11px] md:text-xs font-bold rounded-lg text-center block">
+          ⚡ 즉시 지원
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-white rounded-xl border border-slate-100">
+      <p class="text-slate-500 text-sm">현재 등록된 최신 구인 공고가 없습니다.</p>
+    </div>
+    {% endif %}
+  </section>
+
+</main>
 {% endblock %}

@@ -16,34 +16,25 @@ class Category(models.Model):
         unique=True,
         allow_unicode=True,
         verbose_name="슬러그",
-        help_text="URL 주소에 사용될 식별자 (예: construction, restaurant)"
+        help_text="URL 주소에 사용될 식별자"
     )
-    order_num = models.IntegerField(
-        default=0,
-        verbose_name="정렬 순서",
-        help_text="낮은 숫자가 먼저 표시됩니다 (예: 1, 2, 3...)"
-    )
+    # --- 아래 두 항목(image, order)을 추가해 주세요! ---
     image = models.ImageField(
-        upload_to="categories/",
-        null=True,
-        blank=True,
-        verbose_name="업종 대표 이미지",
-        help_text="메인 화면 업종 카드에 표시될 이미지"
+        upload_to='categories/', 
+        blank=True, 
+        null=True, 
+        verbose_name="카테고리 이미지"
     )
-    description = models.TextField(
-        blank=True,
-        verbose_name="업종 설명",
-        help_text="업종에 대한 간단한 설명"
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="생성일시"
+    order = models.IntegerField(
+        default=0, 
+        verbose_name="정렬 순서",
+        help_text="3x3 화면에 표시될 순서 (작은 숫자가 먼저 나옴)"
     )
 
     class Meta:
-        verbose_name = "업종 카테고리"
-        verbose_name_plural = "업종 카테고리 목록"
-        ordering = ['order_num', 'name']
+        verbose_name = "카테고리"
+        verbose_name_plural = "카테고리 목록"
+        ordering = ['order', 'id']  # 정렬 순서 지정
 
     def __str__(self):
         return self.name

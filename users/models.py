@@ -51,3 +51,18 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.phone_number})"
+    # ==================== 사이트 기본 설정 (로고 관리) ====================
+class SiteConfig(models.Model):
+    """
+    사이트 전체 설정을 관리하는 모델 (로고, 사이트명 등)
+    """
+    site_name = models.CharField("사이트 이름", max_length=50, default="일자리플랫폼")
+    logo = models.ImageField("로고 이미지", upload_to="site_logo/", blank=True, null=True, help_text="상단 헤더에 표시될 로고 이미지 (추천: PNG, 가로형 이미지)")
+    updated_at = models.DateTimeField("최종 수정일", auto_now=True)
+
+    class Meta:
+        verbose_name = "사이트 기본 설정"
+        verbose_name_plural = "사이트 기본 설정"
+
+    def __str__(self):
+        return self.site_name
