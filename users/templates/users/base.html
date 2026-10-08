@@ -13,33 +13,45 @@
 
     <!-- ================= 상단 네비게이션 헤더 ================= -->
     <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 w-full overflow-hidden">
-        <div class="w-full px-4 sm:px-8 lg:px-12 min-h-[72px] py-2 flex items-center justify-between mx-auto gap-2">
+        <div class="w-full px-3 sm:px-6 lg:px-8 min-h-[64px] py-2 flex items-center justify-between mx-auto gap-2">
             
-            <!-- 동적 로고 영역 (반응형 크기 최적화) -->
-            <a href="/" class="flex items-center gap-2 shrink-0">
-                {% if site_config and site_config.logo %}
-                    <img src="{{ site_config.logo.url }}" alt="{{ site_config.site_name }}" class="h-10 sm:h-16 max-w-[200px] sm:max-w-[300px] w-auto object-contain">
-                {% else %}
-                    <div class="bg-indigo-600 text-white font-black px-3 py-1.5 rounded-lg text-sm md:text-base flex items-center justify-center shadow-sm">
-                        JOB
-                    </div>
-                    <span class="text-lg md:text-2xl font-bold tracking-tight text-white">
-                        {{ site_config.site_name|default:"일자리플랫폼" }}
-                    </span>
-                {% endif %}
-            </a>
+            <!-- 좌측: 동적 로고 + 10초 가입 안내 텍스트 (노란색 띠 제거 버전) -->
+            <div class="flex items-center gap-3 overflow-hidden">
+                <a href="/" class="flex items-center gap-2 shrink-0">
+                    {% if site_config and site_config.logo %}
+                        <img src="{{ site_config.logo.url }}" alt="{{ site_config.site_name }}" class="h-8 sm:h-12 max-w-[150px] sm:max-w-[220px] w-auto object-contain">
+                    {% else %}
+                        <div class="bg-indigo-600 text-white font-black px-2.5 py-1 rounded-lg text-xs sm:text-sm flex items-center justify-center shadow-sm">
+                            JOB
+                        </div>
+                        <span class="text-base sm:text-xl font-bold tracking-tight text-white truncate">
+                            {{ site_config.site_name|default:"일자리플랫폼" }}
+                        </span>
+                    {% endif %}
+                </a>
+
+                <!-- 로고 바로 옆 깔끔한 텍스트 (PC 전용) -->
+                <span class="hidden md:inline-block text-xs sm:text-sm text-slate-300 font-medium tracking-tight">
+                    10초만에 가입하고 바로 지원하세요
+                </span>
+            </div>
 
             <!-- 우측 로그인/로그아웃 메뉴 -->
-            <div class="flex items-center gap-2 sm:gap-3 text-xs md:text-sm shrink-0">
+            <div class="flex items-center gap-2 text-xs sm:text-sm shrink-0">
                 {% if user.is_authenticated %}
-                    <span class="text-slate-300 hidden sm:inline"><strong class="text-white">{{ user.username }}</strong>님 환영합니다!</span>
-                    <a href="#" class="px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition whitespace-nowrap">로그아웃</a>
+                    <span class="text-slate-300 hidden sm:inline"><strong class="text-white">{{ user.username }}</strong>님</span>
+                    <a href="#" class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition whitespace-nowrap">로그아웃</a>
                 {% else %}
-                    <a href="#" class="text-slate-300 hover:text-white transition whitespace-nowrap">로그인</a>
-                    <a href="#" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition whitespace-nowrap">회원가입</a>
+                    <a href="#" class="text-slate-300 hover:text-white transition whitespace-nowrap px-1">로그인</a>
+                    <a href="#" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition whitespace-nowrap shadow-sm">회원가입</a>
                 {% endif %}
             </div>
 
+        </div>
+        
+        <!-- 모바일 화면 전용 하단 한 줄 안내 텍스트 (PC에서는 숨김, 노란색 띠 없음) -->
+        <div class="md:hidden bg-slate-800/90 border-t border-slate-800 px-3 py-1.5 text-center">
+            <span class="text-[11px] sm:text-xs text-slate-300 font-medium">10초만에 가입하고 바로 지원하세요</span>
         </div>
     </header>
 
@@ -50,7 +62,7 @@
     </div>
 
     <!-- ================= 하단 푸터 ================= -->
-    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs md:text-sm w-full">
+    <footer class="bg-slate-900 text-slate-400 py-4 border-t border-slate-800 text-center text-xs w-full">
         <div class="w-full px-4 text-center">
             <p>&copy; 2026 {{ site_config.site_name|default:"일자리 매칭 플랫폼" }}. All rights reserved.</p>
         </div>
